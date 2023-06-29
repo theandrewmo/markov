@@ -17,21 +17,33 @@ class MarkovMachine {
 
   makeChains() {
     // TODO
-    let obj = {}
-    for (let word of this.words) {
-      if (!obj[word]) {
-        obj[word] = word
+    this.chain = {};
+    for (let [index,word] of this.words.entries()) {
+      if (!this.chain[word]) {
+        this.chain[word] = []
       }
+      this.chain[word].push(this.words[index+1])
     }
-    return 'made a chain'
+    return this.chain
   }
-
 
   /** return random text from chains */
 
   makeText(numWords = 100) {
     // TODO
+    let newSentence = []
+    const chainKeys = Object.keys(this.chain)
+    for (let i=0; i<numWords/2; i++) {
+      let nextWord = chainKeys[Math.floor(Math.random() * chainKeys.length)]
+      newSentence.push(nextWord)
+
+      const subChain = this.chain[nextWord]
+      let subChainWord = subChain[Math.floor(Math.random() * subChain.length)]
+      if (!subChainWord || newSentence.length === numWords) return newSentence.join(' ')
+      newSentence.push(subChainWord)
+    }
+    return newSentence.join(' ')
   }
 }
 
-let mm = new MarkovMachine('the cat in the hat')
+module.exports = MarkovMachine;
